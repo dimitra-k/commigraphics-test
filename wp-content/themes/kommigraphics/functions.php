@@ -114,8 +114,12 @@ add_action( 'widgets_init', 'kommigraphics_widgets_init' );
  * Enqueue scripts and styles.
  */
 function kommigraphics_scripts() {
+	wp_enqueue_style ('bootstrap-css', get_template_directory_uri() . '/css/bootstrap.min.css');	
 	wp_enqueue_style( 'kommigraphics-style', get_stylesheet_uri() );
-
+	wp_enqueue_style ('slick-theme	-css', get_template_directory_uri() . '/css/slick-theme.css');
+	wp_enqueue_style ('styles-css', get_template_directory_uri() . '/css/styles.css');		
+	wp_enqueue_script( 'bootstrap-js', get_template_directory_uri() . '/js/bootstrap.min.js', array( 'jquery' ) );
+	wp_enqueue_script('slick.min-js', get_template_directory_uri() . '/js/slick.min.js');
 	wp_enqueue_script( 'kommigraphics-navigation', get_template_directory_uri() . '/js/navigation.js', array(), '20120206', true );
 
 	wp_enqueue_script( 'kommigraphics-skip-link-focus-fix', get_template_directory_uri() . '/js/skip-link-focus-fix.js', array(), '20130115', true );
@@ -150,3 +154,54 @@ require get_template_directory() . '/inc/customizer.php';
  * Load Jetpack compatibility file.
  */
 require get_template_directory() . '/inc/jetpack.php';
+
+
+function custom_post_type() {
+	// Register tours post type
+	$labels = array(
+		'name'                => _x( 'Slides', 'Post Type General Name', 'text_domain' ),
+		'singular_name'       => _x( 'Slides', 'Post Type Singular Name', 'text_domain' ),
+		'menu_name'           => __( 'Slides', 'text_domain' ),
+		'parent_item_colon'   => __( 'Parent Slides', 'text_domain' ),
+		'all_items'           => __( 'All Tours Slides', 'text_domain' ),
+		'view_item'           => __( 'View Tours Slides', 'text_domain' ),
+		'add_new_item'        => __( 'Add New Slide', 'text_domain' ),
+		'add_new'             => __( 'Add New', 'text_domain' ),
+		'edit_item'           => __( 'Edit ', 'text_domain' ),
+		'update_item'         => __( 'Update ', 'text_domain' ),
+		'search_items'        => __( 'Search ', 'text_domain' ),
+		'not_found'           => __( 'Not found', 'text_domain' ),
+		'not_found_in_trash'  => __( 'Not found in Trash', 'text_domain' ),
+	);
+	$rewrite = array(
+		'slug'                => 'tours',
+		'with_front'          => true,
+		'pages'               => true,
+		'feeds'               => true,
+	);
+	$args = array(
+		'label'               => __( 'Slides', 'text_domain' ),
+		'description'         => __( 'Slides Posts', 'text_domain' ),
+		'labels'              => $labels,
+		'supports'            => array( 'title', 'editor', 'thumbnail' ),
+		'taxonomies'            => array( 'category', 'post_tag' ),
+		'hierarchical'        => false,
+		'public'              => true,
+		'show_ui'             => true,
+		'show_in_menu'        => true,
+		'show_in_nav_menus'   => true,
+		'show_in_admin_bar'   => true,
+		'menu_position'       => 5,
+		'can_export'          => true,
+		'has_archive'         => false,
+		'exclude_from_search' => false,
+		'publicly_queryable'  => true,
+		'capability_type'     => 'page',
+		'rewrite'			  => $rewrite,
+	);
+	register_post_type( 'slides', $args );	
+	
+}
+
+// Hook into the 'init' action
+add_action( 'init', 'custom_post_type', 0 );
